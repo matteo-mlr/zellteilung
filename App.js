@@ -1,59 +1,52 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
-import TodoItem from './components/TodoItem';
-import Header from './components/Header';
-import AddTodo from './components/AddTodo';
+import { StyleSheet, Text, View, TouchableWithoutFeedback } from 'react-native';
+import Cell from './components/Cell';
 
-export default function App () {
+export default function App() {
 
-    const [todos, setTodos] = useState([
-        { name: 'buy coffee', key: '1'},
-        { name: 'buy garlic', key: '2'},
-        { name: 'buy water', key: '3'}
-    ]);
+  const [splitDirectionVertical, setSplitDirectionVertical] = useState(true);
 
-    const pressHandler = (key) => {
-        setTodos((prevTodos) => {
-            return prevTodos.filter(todo => todo.key != key)
-        })
-    };
+  const [cells, setCells] = useState([
+    { key: '1', x: 0, y: 0 }
+  ]);
 
-    const submitHandler = (text) => {
-        setTodos((prevTodos) => {
-            return [
-                { name: text, key: Math.random().toString()},
-                ...prevTodos
-            ]
-        })
-    }
-
+  const createCell = (key, x, y) => {
+    setSplitDirectionVertical(!splitDirectionVertical);
+    console.log(cells)
     return (
-
-        <View style={styles.container}>
-            <Header />
-            <View style={styles.list}>
-                <AddTodo submitHandler={submitHandler}/>
-                <FlatList 
-                    data={todos}
-                    renderItem={({ item }) => (
-                        <TodoItem item={item} pressHandler={pressHandler}/>
-                    )}
-                />
-            </View>
-        </View>
-
+      { key: '1', x: splitDirectionVertical ? x + 0 : x + 30, y: splitDirectionVertical ? y + 30 : y + 0}
     )
+  }
 
-};
+  const pressHandler = () => {
+    setCells((prevCells) => {
+      return ([
+        ...cells.map((cell) => createCell(cell.key, cell.x, cell.y)),
+        ...cells
+        ])
+      })
+  }
+
+  return (
+    <TouchableWithoutFeedback onPress={() => pressHandler()}>
+      <View style={styles.container}>
+        <View style={styles.cellsContainer}>
+          {cells.map((item) => <Cell item={item} x={item.x} y={item.y}></Cell>)}
+        </View>
+      </View>
+    </TouchableWithoutFeedback>
+  );
+
+}
 
 const styles = StyleSheet.create({
-
-    container: {
-        flex: 1,
-        backgroundColor: '#fff'
-    },
-    list: {
-        paddingHorizontal: 40
-    }
-
-})
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+    height: '100%',
+    width: '100%',
+    flexDirection: 'column'
+  }
+});

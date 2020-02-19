@@ -7,20 +7,28 @@ let borderWidth = 3;
 
 let pointerWidth = 3;
 
-let areaSize = 50;
+let areaSize = 250;
 
 
 let maxWidth = width - borderWidth - pointerWidth;
 
 let frameRate = 60;
-let speed = 15;
+let speed = 10;
 
 class Metro extends Component {
 
 
+    constructor(props){
+        super(props);
+
+        
+
+    }
+
     state = {
         position: 0,
-        direction: "rigth",
+        direction: "right",
+        // inArea : this.checkArea(),
     }
 
     move = () => {
@@ -30,10 +38,10 @@ class Metro extends Component {
         }
 
         if (this.state.position <= 0) {
-            this.setState(previousState => ({direction: "rigth", position: 0}))
+            this.setState(previousState => ({direction: "right", position: 0}))
         }
 
-        if (this.state.direction == "rigth") {
+        if (this.state.direction == "right") {
 
             this.setState(previousState => (
                 { position: this.state.position + speed }
@@ -43,6 +51,8 @@ class Metro extends Component {
                 { position: this.state.position - speed }
             ))
         }
+
+        this.positionTrim()
     }
 
     componentDidMount() {
@@ -58,13 +68,20 @@ class Metro extends Component {
         return this.state.position;
     }
 
+    checkArea(){
+        if(this.state.position >= width/2 - areaSize/2 && this.state.position <= width/2 + areaSize/2 ){
+            return true;
+        }
+        return false;
+    }
+
 
     render() {
         return (
             <View style={styles.container} >
 
                 <View style={styles.area}></View>
-                <View style={[styles.pointer, { left:  this.positionTrim()}]}></View>
+                <View style={[styles.pointer, { left: this.state.position }]}></View>
                 
             </View>
         );
